@@ -39,6 +39,7 @@ public class MemberService {
 		String hp = member.getHp();
 		String name = member.getName();
 		
+		
 		boolean ex = memberRepository.existsByUsername(username);
 		if (ex) {
 			throw new
@@ -57,6 +58,7 @@ public class MemberService {
 		data.setBirth(birth);
 		data.setName(name);
 		data.setHp(hp);
+		data.setRole("ROLE_ADMIN");
 		memberRepository.save(data);
 		return "SUCCESS";
 

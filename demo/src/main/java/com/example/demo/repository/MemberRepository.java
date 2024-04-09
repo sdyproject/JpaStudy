@@ -9,5 +9,7 @@ import com.example.demo.vo.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long>{
 	boolean existsByUsername(String username);
-	 Member findByUsername(String username); 
+	 Member findByUsername(String username);
+	 
+	 
 }

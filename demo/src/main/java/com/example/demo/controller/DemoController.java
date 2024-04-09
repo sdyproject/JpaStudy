@@ -66,7 +66,6 @@ public class DemoController {
 	}
 
 	// 중복 검사
-
 	@GetMapping("/member/joinproc/{id}")
 	public ResponseEntity<Boolean> existsById(@PathVariable("id") String id) {
 		return ResponseEntity.ok(memberService.existsById(id));
@@ -82,5 +81,11 @@ public class DemoController {
 	public List<String> Hello() {
 		return Arrays.asList("React+Spring", "연결 성공");
 	}
+	
+	@GetMapping("/admin")
+    public String admin() {
 
+        return "admin Controller";
+    }
+	
 }
