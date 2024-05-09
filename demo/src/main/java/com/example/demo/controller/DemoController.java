@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.entity.Member;
 import com.example.demo.service.MemberService;
-import com.example.demo.vo.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,19 +50,19 @@ public class DemoController {
 		return new ResponseEntity<>(memberService.모두가져오기(), HttpStatus.OK);
 	}
 
-	@GetMapping("/member/{num}")
-	public ResponseEntity<?> findById(@PathVariable Long num) {
-		return new ResponseEntity<>(memberService.한건가져오기(num), HttpStatus.OK);
+	@GetMapping("/member/{id}")
+	public ResponseEntity<?> findById(@PathVariable Long id) {
+		return new ResponseEntity<>(memberService.한건가져오기(id), HttpStatus.OK);
 	}
 
-	@PutMapping("/member/{num}")
-	public ResponseEntity<?> update(@PathVariable Long num, @RequestBody Member member) {
-		return new ResponseEntity<>(memberService.수정하기(num, member), HttpStatus.OK);
+	@PutMapping("/member/{id}")
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Member member) {
+		return new ResponseEntity<>(memberService.수정하기(id, member), HttpStatus.OK);
 	}
 
-	@DeleteMapping("/member/{num}")
-	public ResponseEntity<?> deleteById(@PathVariable Long num, @RequestBody Member member) {
-		return new ResponseEntity<>(memberService.삭제하기(num), HttpStatus.OK);
+	@DeleteMapping("/member/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable Long id, @RequestBody Member member) {
+		return new ResponseEntity<>(memberService.삭제하기(id), HttpStatus.OK);
 	}
 
 	// 중복 검사

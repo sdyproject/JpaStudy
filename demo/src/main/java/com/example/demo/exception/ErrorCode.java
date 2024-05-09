@@ -9,8 +9,8 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 	
-	ID_DUPLICATED(HttpStatus.CONFLICT,""),
-	ID_NOT_FOUND(HttpStatus.NOT_FOUND,""),
+	USER_DUPLICATED(HttpStatus.CONFLICT,""),
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND,""),
 	INVALID_PASSWORD(HttpStatus.UNAUTHORIZED,"")
 	;
 	private HttpStatus httpStatus;

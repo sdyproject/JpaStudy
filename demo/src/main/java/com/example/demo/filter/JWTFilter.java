@@ -8,8 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.demo.dto.CustomUserDetails;
+import com.example.demo.entity.Member;
 import com.example.demo.utils.JwtUtil;
-import com.example.demo.vo.Member;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package com.example.demo.vo;
+package com.example.demo.entity;
 
 import java.sql.Date;
 
@@ -10,29 +10,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class Member {
+public class Board {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	
+	private Long boardid;
+	
+	private String boardname;
+	
+	private String boardcontext;
+	
+	private Date boardwrite;
+	
 	private Long id;
-	
-	private String username;
-	
-	private String name;
-	
-	private String password;
-	
-	private String hp;
-	
-	private Date birth;
-	
-	private String role;
-
-	
-    
 }
