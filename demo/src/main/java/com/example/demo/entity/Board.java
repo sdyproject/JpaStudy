@@ -28,5 +28,7 @@ public class Board {
 	
 	private Date boardwrite;
 	
+	private Date boardschedule;
+	
 	private Long id;
 }

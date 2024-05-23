@@ -20,5 +20,9 @@ public class BoardResponse {
 	
 	private Date boardwrite;
 	
+	private Date boardschedule;
+	
 	private Long id;
+	
+	private String name;
 }
