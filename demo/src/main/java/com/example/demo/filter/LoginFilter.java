@@ -3,6 +3,7 @@ package com.example.demo.filter;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import com.example.demo.dto.CustomUserDetails;
 import com.example.demo.utils.JwtUtil;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -50,19 +52,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) {
-		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 		
-		String username = customUserDetails.getUsername();
+		String username = authentication.getName();
 		
-		 Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-	        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-	        GrantedAuthority auth = iterator.next();
-
-	        String role = auth.getAuthority();
-	        
-	        String token = jwtUtil.createJwt(username, role, 60*60*10L);
-	        
-	        response.addHeader("Authorization","Bearer "+ token);
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+	    GrantedAuthority auth = iterator.next();
+	    String role = auth.getAuthority();
+	    
+	    //토큰 생성
+	    //username , role 동일값들어가고 생명주기 다르게 준다.
+	    String access = jwtUtil.createJwt("access", username, role, 600000L);
+	    String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+	
+	    //응답 
+	    response.setHeader("access", access);
+	    response.addCookie(createCookie("refresh",refresh));
+	    response.setStatus(HttpStatus.OK.value());
 	}
 
 //로그인 실패시 실행하는 메소드
@@ -70,5 +76,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException failed) {
 		response.setStatus(401);
+	}
+//쿠키 생성
+	private Cookie createCookie(String key, String value) {
+
+	    Cookie cookie = new Cookie(key, value);
+	    //쿠키 생명주기 
+	    cookie.setMaxAge(24*60*60);
+	    //https 통신 시 필요한 setSecure
+	    //cookie.setSecure(true);
+	    //쿠키 적용 범위 : setPath
+	    //cookie.setPath("/");
+	    //자바스크립트를 통한 쿠기 접근 제어
+		 cookie.setHttpOnly(true); 
+
+	    return cookie;
 	}
 }

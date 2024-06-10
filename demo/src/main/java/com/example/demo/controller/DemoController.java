@@ -35,15 +35,12 @@ public class DemoController {
 		return ResponseEntity.ok().body("회원가입 성공");
 
 	}
-
-	
 	/*
 	 * @PostMapping("/login") public ResponseEntity<?> login(@RequestBody Member
 	 * member) { String token =
 	 * memberService.login(member.getId(),member.getPassword()); return
 	 * ResponseEntity.ok().body("성공"); }
 	 */
-	 
 
 	@GetMapping("/member")
 	public ResponseEntity<?> findAll() {
@@ -71,16 +68,12 @@ public class DemoController {
 		return ResponseEntity.ok(memberService.existsById(id));
 
 	}
-
-	@GetMapping("/hello")
-	public ResponseEntity<?> hello() {
-		return ResponseEntity.ok("hello");
-	}
-
+	
 	@GetMapping("/api/demo")
 	public List<String> Hello() {
 		return Arrays.asList("React+Spring", "연결 성공");
 	}
+
 	
 	@GetMapping("/admin")
     public String admin() {

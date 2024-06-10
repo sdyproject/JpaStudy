@@ -6,7 +6,7 @@ $NAVIGATION-HEIGHT: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    flex-direction: column;
 
     width: 100%;
     height: 100vh;
@@ -49,13 +49,11 @@ $NAVIGATION-HEIGHT: 50px;
                 }
             }
         }
-        &__imageBox {
+        &__board {
             display: flex;
-            align-items: center;
-            justify-content: center;
-
+            
             width: 100%;
-            height: 60%;
+            height: 70%;
             flex-wrap: wrap;
 
             padding: 16px 60px;
@@ -63,6 +61,24 @@ $NAVIGATION-HEIGHT: 50px;
             gap: 16px;
 
             overflow-y: scroll;
+
+            .board {
+               width: 100%; 
+
+               &__title {
+               
+                color: $color-gray-900; 
+                font-size: 1.2rem;
+                font-weight: 700;
+                }
+                &__contents {
+            
+                    color: $color-gray-900; 
+                    
+                    font-weight: 700;
+                }
+            }
         }
+        
     }
 }

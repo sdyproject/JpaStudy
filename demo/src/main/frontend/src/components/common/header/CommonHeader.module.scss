@@ -14,16 +14,20 @@
         justify-content: center;
 
         height: 100%;
-
+        text-decoration-line: none;
         gap: 8px;
+        outline: none;
+        cursor: pointer;
 
 
         &__logo {
-            height: 75%;
+            height: 65%;
+           
         }
         &__title {
             font-size: 24px;
             font-weight: 600;
+            color: $color-black-900;
         }
     }
 
@@ -38,7 +42,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
+            text-decoration-line: none;
             outline: none;
             cursor: pointer;
 
