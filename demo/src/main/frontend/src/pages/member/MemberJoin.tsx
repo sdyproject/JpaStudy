@@ -4,7 +4,7 @@ import styles from './MemberJoin.module.scss'
 import { useNavigate } from "react-router-dom";
 
 
-const MemberJoin = () => {
+function MemberJoin  () {
     
     const Navigate = useNavigate();
 
@@ -73,6 +73,6 @@ const MemberJoin = () => {
 
     );
     
-};
+}
 
 export default MemberJoin;

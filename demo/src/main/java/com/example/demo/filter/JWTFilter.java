@@ -1,6 +1,7 @@
 package com.example.demo.filter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import com.example.demo.dto.CustomUserDetails;
 import com.example.demo.entity.Member;
 import com.example.demo.utils.JwtUtil;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,43 +30,57 @@ public class JWTFilter extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		 String authorization= request.getHeader("Authorization");
-		 
-		  if (authorization == null || !authorization.startsWith("Bearer ")) {
+		
+		String accessToken = request.getHeader("access");
 
-	            System.out.println("token null");
-	            filterChain.doFilter(request, response);
-							
-							//조건이 해당되면 메소드 종료 (필수)
-	            return;
-	        }
-		  System.out.println("authorization now");
-		  String token = authorization.split(" ")[1];
-		  
-		  if (jwtUtil.isExpired(token)) {
+		
+		if (accessToken == null) {
 
-	            System.out.println("token expired");
-	            filterChain.doFilter(request, response);
+		    filterChain.doFilter(request, response);
 
-							//조건이 해당되면 메소드 종료 (필수)
-	            return;
-	        }
-		  
-		  String username = jwtUtil.getUsername(token);
-		  String role = jwtUtil.getRole(token);
-		  
-		  Member member = new Member();
-		  member.setUsername(username);
-		  member.setPassword("temppassword");
-		  member.setRole(role);
-		  
-		  CustomUserDetails customUserDetails = new CustomUserDetails(member);
-		  
-		  Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-		  
-		  SecurityContextHolder.getContext().setAuthentication(authToken);
-		  
-		  filterChain.doFilter(request, response);
+		    return;
+		}
+
+		
+		try {
+		    jwtUtil.isExpired(accessToken);
+		} catch (ExpiredJwtException e) {
+
+		    
+		    PrintWriter writer = response.getWriter();
+		    writer.print("access token expired");
+
+		    
+		    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		    return;
+		}
+
+		
+		String category = jwtUtil.getCategory(accessToken);
+
+		if (!category.equals("access")) {
+
+		    
+		    PrintWriter writer = response.getWriter();
+		    writer.print("invalid access token");
+
+		    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		    return;
+		}
+
+		
+		String username = jwtUtil.getUsername(accessToken);
+		String role = jwtUtil.getRole(accessToken);
+
+		 Member member = new Member();
+		member.setUsername(username);
+		member.setRole(role);
+		CustomUserDetails customUserDetails = new CustomUserDetails(member);
+
+		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authToken);
+
+		filterChain.doFilter(request, response);
 	}
 
 }
