@@ -1,5 +1,7 @@
 package com.example.demo.filter;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -10,11 +12,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StreamUtils;
 
 import com.example.demo.dto.CustomUserDetails;
+import com.example.demo.dto.LoginDto;
 import com.example.demo.utils.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,10 +42,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
 
-		// 클라이언트 요청에서 username, password 추출
-		String username = obtainUsername(request);
-		String password = obtainPassword(request);
-
+		// (폼데이터전송)클라이언트 요청에서 username, password 추출
+		/*
+		 * String username = obtainUsername(request); String password =
+		 * obtainPassword(request);
+		 */
+		LoginDto loginDto = new LoginDto();
+		
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			ServletInputStream inputStream = request.getInputStream();
+			String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+			loginDto = objectMapper.readValue(messageBody, LoginDto.class);
+			
+		} catch (IOException e) {
+			  throw new RuntimeException(e);
+		}
+		System.out.println(loginDto.getUsername());
+		
+		String username = loginDto.getUsername();
+		String password = loginDto.getPassword();
 		// 스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password,
 				null);
