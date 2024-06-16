@@ -4,8 +4,13 @@ function CommonSearchBar() {
   return (
    <div className={styles.searchBar}>
     <div className={styles.searchBar__search}>
-        <input type="text"  placeholder='찾으실 일정을 검색하세요.' className={styles.searchBar__search__input}/>
-        <img src="/src/assets/icons/icon-search.svg" alt="" />
+        <img src="/src/assets/icons/icon-search.svg"  className={styles.searchBar__search__img} />
+        <input type="text"  placeholder='Search ' className={styles.searchBar__search__input}/>
+        
+    </div>
+    <div className={styles.memberdata}>
+      
+    <span className={styles.memberdata__memberName}>member1</span>
     </div>
 
    </div>

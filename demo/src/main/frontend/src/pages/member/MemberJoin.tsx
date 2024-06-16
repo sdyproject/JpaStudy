@@ -54,7 +54,7 @@ function MemberJoin  () {
         <div className={styles.wrapper}>
                 <span className={styles.wrapper__title}>회원 가입</span> <br/>
                  <div className={styles.wrapper__content}>
-                    <input type="text" placeholder="아이디" name="username"  onChange={changValue} className={styles.wrapper__content__input}/> <br/>
+                    <input type="text" placeholder="아이디" name="username"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
                     <input type="text" placeholder="이름" name="name"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
                     <input type="text" placeholder="비밀번호" name="password"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
                     <input type="text" placeholder="연락처" name="hp"  onChange={changValue}  className={styles.wrapper__content__input} /> <br/>

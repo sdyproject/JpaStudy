@@ -2,11 +2,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    margin: 10px 10px;
     width: 100%;
-    height: 56px;
+    height: 70px;
 
-    padding: 0 16px;
+    
 
     &__logoBox{
         display: flex;
@@ -15,7 +15,7 @@
 
         height: 100%;
         text-decoration-line: none;
-        gap: 8px;
+        
         outline: none;
         cursor: pointer;
 
@@ -33,10 +33,12 @@
 
     &__profileBox {
          display: flex;
-         align-items: center;
-         justify-content: center;
-
-         gap: 16px;
+         justify-content: space-between;
+         width: 25%;
+         height: 100%;
+         margin: 10% 5%;
+         
+         
 
          &__button {
             display: flex;
@@ -45,20 +47,20 @@
             text-decoration-line: none;
             outline: none;
             cursor: pointer;
-
+            color: $color-black-900;
+            font-weight: 600;
+            
+            width: 100%;
             padding: 6px 10px;
-
-            border: 1px solid $color-white-300;
-            border-radius: 4px;
-
-            color: $color-white-600;
+            margin: 5px 5px;
+          
             background-color: $color-white-000;
-
+            
+            &:hover{
+                
+                color: $color-gray-400;
+            }
          }
-         &__memberName {
-            color: $color-white-600;
-            font-weight: 400;
-            font-size: 15px;
-         }
+         
     }
 }

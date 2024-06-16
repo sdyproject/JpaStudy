@@ -1,12 +1,12 @@
-$HEADER-HEIGHT: 56px;
+$SEARCHBAR-HEIGHT:40px;
+$HEADER-HEIGHT: 70px;
 $FOOTER-HEIGHT: 50px;
 $NAVIGATION-HEIGHT: 50px;
 
 .page {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    flex-direction: column;
+   
 
     width: 100%;
     height: 100vh;
@@ -18,7 +18,7 @@ $NAVIGATION-HEIGHT: 50px;
         justify-content: flex-start;
 
         width: 100%;
-        height: calc(100% - $HEADER-HEIGHT - $NAVIGATION-HEIGHT - $FOOTER-HEIGHT);
+        height: calc(100% - $SEARCHBAR-HEIGHT - $HEADER-HEIGHT - $NAVIGATION-HEIGHT - $FOOTER-HEIGHT);
 
         &__introBox {
             display: flex;
@@ -30,19 +30,13 @@ $NAVIGATION-HEIGHT: 50px;
             
             background-image: url('/src/assets/images/Banner.jpg');
             background-size: cover;
-            background-position: 100% 15%;
+            background-position: 100% 70%;
 
             .wrapper {
                 display: flex;
                 flex-direction: column;
 
-                &__title {
-                    margin-bottom: 4px;
-
-                    color: $color-gray-900; // CSS COLOR CODE 변수화 작업 설명 예정
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                }
+               
                 &__desc {
                     color: $color-gray-900;
                     margin-bottom: 32px;
