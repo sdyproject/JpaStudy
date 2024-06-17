@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,10 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.utils.JwtUtil;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,7 +29,8 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+	
+	private final JwtUtil jwtUtil; 
 	
 	@Transactional
 	public String join(Member member) {
@@ -86,10 +92,47 @@ public class MemberService {
 	}
 
 	// 중복 여부확인
-
 	@Transactional
 	public boolean existsById(String username) {
 		return memberRepository.existsByUsername(username);
+	}
+	
+	public void reissue(HttpServletRequest request, HttpServletResponse response) {
+		String refresh = null;
+		Cookie[] cookies = request.getCookies();
+		for(Cookie cookie : cookies) {
+			if (cookie.getName().equals("refresh")) {
+				
+				refresh = cookie.getValue();
+			}
+			
+		}
+		
+		if (refresh == null) {
+			throw new 
+			AppException(ErrorCode.REFRESH_TOKEN_NULL,  "refresh token null");
+		} try {
+			jwtUtil.isExpired(refresh);
+		} catch (ExpiredJwtException e) {
+			throw new
+			AppException(ErrorCode.REFRESH_TOKEN_EXPIRED,  "refresh token expired");
+
+		}
+		String category = jwtUtil.getCategory(refresh);
+		
+		if (!category.equals("refresh")){
+			throw new
+			AppException(ErrorCode.INVALID_REFRESH_TOKEN,  "invalid refresh token");	
+			
+		}
+		String username = jwtUtil.getUsername(refresh);
+		String role =jwtUtil.getRole(refresh);
+		
+		String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
+		
+		response.setHeader("access", newAccess);
+		
+		
 	}
 
 }
