@@ -2,10 +2,7 @@ package com.example.demo.service;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +28,7 @@ public class MemberService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	private final JwtUtil jwtUtil; 
+	
 	
 	@Transactional
 	public String join(Member member) {
@@ -129,10 +127,21 @@ public class MemberService {
 		String role =jwtUtil.getRole(refresh);
 		
 		String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
+		String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 		
 		response.setHeader("access", newAccess);
+		response.addCookie(createCookie("refresh", newRefresh));
 		
-		
+	}
+	private Cookie createCookie(String key, String value) {
+
+	    Cookie cookie = new Cookie(key, value);
+	    cookie.setMaxAge(24*60*60);
+	    //cookie.setSecure(true);
+	    //cookie.setPath("/");
+	    cookie.setHttpOnly(true);
+
+	    return cookie;
 	}
 
 }
