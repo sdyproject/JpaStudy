@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Member;
+import com.example.demo.entity.RefreshToken;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.MemberRepository;
+import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.utils.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,10 +28,11 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	private final JwtUtil jwtUtil; 
-	
-	
+
+	private final JwtUtil jwtUtil;
+
+	private final RefreshTokenRepository refreshTokenRepository;
+
 	@Transactional
 	public String join(Member member) {
 
@@ -38,17 +41,12 @@ public class MemberService {
 		Date birth = member.getBirth();
 		String hp = member.getHp();
 		String name = member.getName();
-		
-		
+
 		boolean ex = memberRepository.existsByUsername(username);
 		System.out.println(ex);
 		if (ex) {
-			throw new
-			  AppException(ErrorCode.USER_DUPLICATED, username + " 이미 존재하는 아이디 입니다.");
+			throw new AppException(ErrorCode.USER_DUPLICATED, username + " 이미 존재하는 아이디 입니다.");
 		}
-		
-		
-		 
 
 		Member data = new Member();
 		data.setUsername(username);
@@ -61,8 +59,6 @@ public class MemberService {
 		return "SUCCESS";
 
 	}
-
-	
 
 	@Transactional(readOnly = true)
 	public Member 한건가져오기(Long num) {
@@ -94,54 +90,71 @@ public class MemberService {
 	public boolean existsById(String username) {
 		return memberRepository.existsByUsername(username);
 	}
-	
+
 	public void reissue(HttpServletRequest request, HttpServletResponse response) {
 		String refresh = null;
 		Cookie[] cookies = request.getCookies();
-		for(Cookie cookie : cookies) {
+		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("refresh")) {
-				
+
 				refresh = cookie.getValue();
 			}
-			
+
 		}
-		
+
 		if (refresh == null) {
-			throw new 
-			AppException(ErrorCode.REFRESH_TOKEN_NULL,  "refresh token null");
-		} try {
+			throw new AppException(ErrorCode.REFRESH_TOKEN_NULL, "refresh token null");
+		}
+		try {
 			jwtUtil.isExpired(refresh);
 		} catch (ExpiredJwtException e) {
-			throw new
-			AppException(ErrorCode.REFRESH_TOKEN_EXPIRED,  "refresh token expired");
+			throw new AppException(ErrorCode.REFRESH_TOKEN_EXPIRED, "refresh token expired");
 
 		}
 		String category = jwtUtil.getCategory(refresh);
-		
-		if (!category.equals("refresh")){
-			throw new
-			AppException(ErrorCode.INVALID_REFRESH_TOKEN,  "invalid refresh token");	
-			
+
+		if (!category.equals("refresh")) {
+			throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "invalid refresh token");
+
 		}
-		String username = jwtUtil.getUsername(refresh);
-		String role =jwtUtil.getRole(refresh);
 		
+		Boolean isExist = refreshTokenRepository.existsByRefresh(refresh);
+		if (!isExist) {
+			throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "(existbyfresh)invalid refresh token");
+
+		}
+
+		String username = jwtUtil.getUsername(refresh);
+		String role = jwtUtil.getRole(refresh);
+
 		String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
 		String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 		
+		refreshTokenRepository.deleteByRefresh(refresh);
+		addRefreshEntity(username, newRefresh);
+
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));
-		
+
+	}		
+	private void addRefreshEntity(String username, String refresh) {
+
+	    RefreshToken refreshToken = new RefreshToken();
+	    refreshToken.setUsername(username);
+		refreshToken.setRefresh(refresh);
+	    refreshTokenRepository.save(refreshToken);
 	}
+
+	
 	private Cookie createCookie(String key, String value) {
 
-	    Cookie cookie = new Cookie(key, value);
-	    cookie.setMaxAge(24*60*60);
-	    //cookie.setSecure(true);
-	    //cookie.setPath("/");
-	    cookie.setHttpOnly(true);
+		Cookie cookie = new Cookie(key, value);
+		cookie.setMaxAge(24 * 60 * 60);
+		// cookie.setSecure(true);
+		// cookie.setPath("/");
+		cookie.setHttpOnly(true);
 
-	    return cookie;
+		return cookie;
 	}
 
 }

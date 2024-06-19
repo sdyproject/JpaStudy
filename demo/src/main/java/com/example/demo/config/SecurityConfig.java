@@ -1,12 +1,12 @@
 package com.example.demo.config;
 
 
-import java.util.Arrays;
+
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.example.demo.filter.JWTFilter;
 import com.example.demo.filter.LoginFilter;
+import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.utils.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +31,14 @@ public class SecurityConfig {
 	private final AuthenticationConfiguration authenticationConfiguration;
 	
 	private final JwtUtil jwtUtil;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JwtUtil jwtUtil ) {
+	
+	private final RefreshTokenRepository refreshTokenRepository;
+	
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository ) {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 	
     @Bean
@@ -92,7 +97,7 @@ public class SecurityConfig {
 		.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 		
 		http
-		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
 		
 		return http.build();
 	}

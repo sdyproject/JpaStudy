@@ -14,8 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
-import com.example.demo.dto.CustomUserDetails;
 import com.example.demo.dto.LoginDto;
+import com.example.demo.entity.RefreshToken;
+import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,14 +29,17 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final AuthenticationManager authenticationManager;
-		
-	
+
 	private final JwtUtil jwtUtil;
-	
-	public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+
+	private RefreshTokenRepository refreshTokenRepository;
+
+	public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
+			RefreshTokenRepository refreshTokenRepository) {
 
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;
+		this.refreshTokenRepository = refreshTokenRepository;
 	}
 
 	@Override
@@ -48,18 +52,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		 * obtainPassword(request);
 		 */
 		LoginDto loginDto = new LoginDto();
-		
+
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			ServletInputStream inputStream = request.getInputStream();
 			String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 			loginDto = objectMapper.readValue(messageBody, LoginDto.class);
-			
+
 		} catch (IOException e) {
-			  throw new RuntimeException(e);
+			throw new RuntimeException(e);
 		}
 		System.out.println(loginDto.getUsername());
-		
+
 		String username = loginDto.getUsername();
 		String password = loginDto.getPassword();
 		// 스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
@@ -74,23 +78,28 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) {
-		
+
 		String username = authentication.getName();
-		
+
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-	    GrantedAuthority auth = iterator.next();
-	    String role = auth.getAuthority();
-	    
-	    //토큰 생성
-	    //username , role 동일값들어가고 생명주기 다르게 준다.
-	    String access = jwtUtil.createJwt("access", username, role, 600000L);
-	    String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
-	
-	    //응답 
-	    response.setHeader("access", access);
-	    response.addCookie(createCookie("refresh",refresh));
-	    response.setStatus(HttpStatus.OK.value());
+		GrantedAuthority auth = iterator.next();
+		String role = auth.getAuthority();
+
+		// 토큰 생성
+		// username , role 동일값들어가고 생명주기 다르게 준다.
+		String access = jwtUtil.createJwt("access", username, role, 600000L);
+		String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+		System.out.println(refresh);
+		
+			RefreshToken refreshToken = new RefreshToken();
+			refreshToken.setUsername(username);
+			refreshToken.setRefresh(refresh);
+			refreshTokenRepository.save(refreshToken);
+		// 응답
+		response.setHeader("access", access);
+		response.addCookie(createCookie("refresh", refresh));
+		response.setStatus(HttpStatus.OK.value());
 	}
 
 //로그인 실패시 실행하는 메소드
@@ -99,19 +108,21 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 			AuthenticationException failed) {
 		response.setStatus(401);
 	}
+	
+	
 //쿠키 생성
 	private Cookie createCookie(String key, String value) {
 
-	    Cookie cookie = new Cookie(key, value);
-	    //쿠키 생명주기 
-	    cookie.setMaxAge(24*60*60);
-	    //https 통신 시 필요한 setSecure
-	    //cookie.setSecure(true);
-	    //쿠키 적용 범위 : setPath
-	    //cookie.setPath("/");
-	    //자바스크립트를 통한 쿠기 접근 제어
-		 cookie.setHttpOnly(true); 
+		Cookie cookie = new Cookie(key, value);
+		// 쿠키 생명주기
+		cookie.setMaxAge(24 * 60 * 60);
+		// https 통신 시 필요한 setSecure
+		// cookie.setSecure(true);
+		// 쿠키 적용 범위 : setPath
+		// cookie.setPath("/");
+		// 자바스크립트를 통한 쿠기 접근 제어
+		cookie.setHttpOnly(true);
 
-	    return cookie;
+		return cookie;
 	}
 }
