@@ -11,10 +11,14 @@ import lombok.Setter;
 @Setter
 @RedisHash(value = "refresh", timeToLive = 86400000)
 public class RefreshToken {
+
 	@Id
 	private Long id;
-	@Indexed
-	private String refresh;
 	
-	private String username;
-} 
+	private String refresh;
+	private String username; 
+	
+	
+	
+
+}

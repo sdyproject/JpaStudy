@@ -2,7 +2,10 @@ package com.example.demo.service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.utils.JwtUtil;
 
+import ch.qos.logback.core.subst.Token;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +36,8 @@ public class MemberService {
 	private final JwtUtil jwtUtil;
 
 	private final RefreshTokenRepository refreshTokenRepository;
+
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Transactional
 	public String join(Member member) {
@@ -117,35 +123,46 @@ public class MemberService {
 			throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "invalid refresh token");
 
 		}
-		
-		Boolean isExist = refreshTokenRepository.existsByRefresh(refresh);
-		if (!isExist) {
-			throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "(existbyfresh)invalid refresh token");
 
-		}
+	
+		
 
 		String username = jwtUtil.getUsername(refresh);
 		String role = jwtUtil.getRole(refresh);
-
+		getValues(username);
+		
 		String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
 		String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 		
-		refreshTokenRepository.deleteByRefresh(refresh);
-		addRefreshEntity(username, newRefresh);
-
+		
+		
+		deleteValue(refresh);
+		setValues(username, newRefresh);
+		
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));
 
-	}		
-	private void addRefreshEntity(String username, String refresh) {
-
-	    RefreshToken refreshToken = new RefreshToken();
-	    refreshToken.setUsername(username);
-		refreshToken.setRefresh(refresh);
-	    refreshTokenRepository.save(refreshToken);
 	}
 
+	private void setValues(String key, String value) {
+		ValueOperations<String, Object> values = redisTemplate.opsForValue();
+		values.set(key, value);
+	}
+
+	private void getValues(String key) {
+		ValueOperations<String, Object> values = redisTemplate.opsForValue();
+		if (values.get(key) == null) {
+			throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "(existbyfresh)invalid refresh token");
+		}
+		
+	}
 	
+	private void deleteValue(String key) {
+        redisTemplate.delete(key);
+    }
+
+	
+
 	private Cookie createCookie(String key, String value) {
 
 		Cookie cookie = new Cookie(key, value);

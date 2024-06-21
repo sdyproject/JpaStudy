@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.StreamUtils;
 
 import com.example.demo.dto.LoginDto;
-import com.example.demo.entity.RefreshToken;
 import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,14 +33,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final JwtUtil jwtUtil;
 
-	private RefreshTokenRepository refreshTokenRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
+	
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-			RefreshTokenRepository refreshTokenRepository) {
+			RefreshTokenRepository refreshTokenRepository,RedisTemplate<String, Object> redisTemplate) {
 
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;
 		this.refreshTokenRepository = refreshTokenRepository;
+		this.redisTemplate=redisTemplate;
 	}
 
 	@Override
@@ -91,11 +95,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String access = jwtUtil.createJwt("access", username, role, 600000L);
 		String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 		System.out.println(refresh);
+
 		
-			RefreshToken refreshToken = new RefreshToken();
-			refreshToken.setUsername(username);
-			refreshToken.setRefresh(refresh);
-			refreshTokenRepository.save(refreshToken);
+
+		/*
+		 * RefreshToken refreshToken = new RefreshToken();
+		 * refreshToken.setUsername(username); refreshToken.setRefresh(refresh);
+		 * refreshTokenRepository.save(refreshToken);
+		 */
+		/* addRefreshEntity(refresh); */
+		setValues(username, refresh);
 		// 응답
 		response.setHeader("access", access);
 		response.addCookie(createCookie("refresh", refresh));
@@ -109,7 +118,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		response.setStatus(401);
 	}
 	
+	private void setValues(String key, String value) {
+		ValueOperations<String, Object> values = redisTemplate.opsForValue();
+		values.set(key, value);
+	}
 	
+
+	/*
+	 * private void addRefreshEntity(String refresh) {
+	 * 
+	 * RefreshToken refreshToken = new RefreshToken();
+	 * refreshToken.setRefresh(refresh); refreshTokenRepository.save(refreshToken);
+	 * }
+	 */
 //쿠키 생성
 	private Cookie createCookie(String key, String value) {
 

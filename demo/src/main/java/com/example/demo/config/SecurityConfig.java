@@ -6,7 +6,7 @@ import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,9 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.example.demo.filter.CustomLogoutFilter;
 import com.example.demo.filter.JWTFilter;
 import com.example.demo.filter.LoginFilter;
 import com.example.demo.repository.RefreshTokenRepository;
@@ -34,11 +36,15 @@ public class SecurityConfig {
 	
 	private final RefreshTokenRepository refreshTokenRepository;
 	
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository ) {
+	private final RedisTemplate<String, Object> redisTemplate;
+	
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JwtUtil jwtUtil,
+    		RefreshTokenRepository refreshTokenRepository,RedisTemplate<String, Object> redisTemplate ) {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.redisTemplate=redisTemplate;
     }
 	
     @Bean
@@ -85,6 +91,9 @@ public class SecurityConfig {
 			.formLogin((auth) -> auth.disable());
 		http
 			.httpBasic((auth) -> auth.disable());
+		
+			
+		
 		http
 		  .authorizeHttpRequests((auth) -> auth
 				  .requestMatchers("/login", "/","/member","/reissue").permitAll()
@@ -97,8 +106,9 @@ public class SecurityConfig {
 		.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 		
 		http
-		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
-		
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,refreshTokenRepository,redisTemplate), UsernamePasswordAuthenticationFilter.class);
+		http 
+		.addFilterBefore(new CustomLogoutFilter(jwtUtil,redisTemplate), LogoutFilter.class);
 		return http.build();
 	}
 	

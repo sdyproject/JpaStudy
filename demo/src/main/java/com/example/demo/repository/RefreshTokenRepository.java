@@ -1,4 +1,6 @@
 package com.example.demo.repository;
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,8 +12,7 @@ public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Lon
 	
 	
 	
-	boolean existsByRefresh(String refresh);
-	 @Transactional
+	 boolean existsByRefresh(String refresh);	
+	 Optional <RefreshToken> findByRefresh(String refresh);
 	 RefreshToken deleteByRefresh(String refresh);
-
 }
