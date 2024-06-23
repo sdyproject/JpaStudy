@@ -5,8 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.StreamUtils;
 
 import com.example.demo.dto.LoginDto;
-import com.example.demo.repository.RefreshTokenRepository;
+import com.example.demo.service.RefreshService;
 import com.example.demo.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,17 +31,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final JwtUtil jwtUtil;
 
-	private final RefreshTokenRepository refreshTokenRepository;
+	private final RefreshService refreshService;
 	
-	private final RedisTemplate<String, Object> redisTemplate;
+	
 
-	public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-			RefreshTokenRepository refreshTokenRepository,RedisTemplate<String, Object> redisTemplate) {
+	public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil
+			,RefreshService refreshService) {
 
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;
-		this.refreshTokenRepository = refreshTokenRepository;
-		this.redisTemplate=redisTemplate;
+		this.refreshService = refreshService;
+		
 	}
 
 	@Override
@@ -78,7 +76,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		return authenticationManager.authenticate(authToken);
 	}
 
-//로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
+//로그인 성공시 JWT 발급
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) {
@@ -98,14 +96,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		
 
-		/*
-		 * RefreshToken refreshToken = new RefreshToken();
-		 * refreshToken.setUsername(username); refreshToken.setRefresh(refresh);
-		 * refreshTokenRepository.save(refreshToken);
-		 */
-		/* addRefreshEntity(refresh); */
-		setValues(username, refresh);
-		// 응답
+		//Redis 토큰 생성
+		refreshService.setValues(username, refresh);
+		
 		response.setHeader("access", access);
 		response.addCookie(createCookie("refresh", refresh));
 		response.setStatus(HttpStatus.OK.value());
@@ -118,19 +111,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		response.setStatus(401);
 	}
 	
-	private void setValues(String key, String value) {
-		ValueOperations<String, Object> values = redisTemplate.opsForValue();
-		values.set(key, value);
-	}
-	
 
-	/*
-	 * private void addRefreshEntity(String refresh) {
-	 * 
-	 * RefreshToken refreshToken = new RefreshToken();
-	 * refreshToken.setRefresh(refresh); refreshTokenRepository.save(refreshToken);
-	 * }
-	 */
+	
 //쿠키 생성
 	private Cookie createCookie(String key, String value) {
 

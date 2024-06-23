@@ -2,23 +2,18 @@ package com.example.demo.service;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.antlr.v4.runtime.TokenStream;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Member;
-import com.example.demo.entity.RefreshToken;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.MemberRepository;
-import com.example.demo.repository.RefreshTokenRepository;
 import com.example.demo.utils.JwtUtil;
 
-import ch.qos.logback.core.subst.Token;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,9 +30,9 @@ public class MemberService {
 
 	private final JwtUtil jwtUtil;
 
-	private final RefreshTokenRepository refreshTokenRepository;
+	private final RefreshService refreshService;
 
-	private final RedisTemplate<String, Object> redisTemplate;
+	/* private final RedisTemplate<String, Object> redisTemplate; */
 
 	@Transactional
 	public String join(Member member) {
@@ -65,19 +60,27 @@ public class MemberService {
 		return "SUCCESS";
 
 	}
+	/*
+	 * public Member getMemberName(String username) { Member member =
+	 * memberRepository.findByUsername(username); if (member==null) { throw new
+	 * AppException(ErrorCode.USER_DUPLICATED, "존재하지 않는 멤버 입니다."); }
+	 * 
+	 * 
+	 * return member; }
+	 */
 
 	@Transactional(readOnly = true)
-	public Member 한건가져오기(Long num) {
-		return memberRepository.findById(num).orElseThrow(() -> new IllegalArgumentException("num 확인해주세요"));
+	public Member getMember(Long id) {
+		return memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("id 확인해주세요"));
 	}
 
 	@Transactional(readOnly = true)
-	public List<Member> 모두가져오기() {
+	public List<Member> getMembers() {
 		return memberRepository.findAll();
 	}
 
 	@Transactional
-	public Member 수정하기(Long num, Member member) {
+	public Member updateMember(Long num, Member member) {
 		Member memberVoEntity = memberRepository.findById(num)
 				.orElseThrow(() -> new IllegalArgumentException("num 확인해주세요"));
 		memberVoEntity.setPassword(member.getPassword());
@@ -86,9 +89,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public String 삭제하기(Long num) {
-		memberRepository.deleteById(num);
+	public String deleteMember(Long id) {
+		memberRepository.deleteById(id);
 		return "ok";
+		
+		
 	}
 
 	// 중복 여부확인
@@ -97,6 +102,7 @@ public class MemberService {
 		return memberRepository.existsByUsername(username);
 	}
 
+	
 	public void reissue(HttpServletRequest request, HttpServletResponse response) {
 		String refresh = null;
 		Cookie[] cookies = request.getCookies();
@@ -129,37 +135,22 @@ public class MemberService {
 
 		String username = jwtUtil.getUsername(refresh);
 		String role = jwtUtil.getRole(refresh);
-		getValues(username);
+		refreshService.getValues(username);
 		
 		String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
 		String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 		
 		
 		
-		deleteValue(refresh);
-		setValues(username, newRefresh);
+		refreshService.deleteValue(refresh);
+		refreshService.setValues(username, newRefresh);
 		
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));
 
 	}
 
-	private void setValues(String key, String value) {
-		ValueOperations<String, Object> values = redisTemplate.opsForValue();
-		values.set(key, value);
-	}
-
-	private void getValues(String key) {
-		ValueOperations<String, Object> values = redisTemplate.opsForValue();
-		if (values.get(key) == null) {
-			throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "(existbyfresh)invalid refresh token");
-		}
-		
-	}
 	
-	private void deleteValue(String key) {
-        redisTemplate.delete(key);
-    }
 
 	
 

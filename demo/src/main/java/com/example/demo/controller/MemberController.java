@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,14 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Member;
 import com.example.demo.service.MemberService;
+import com.example.demo.utils.JwtUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-public class DemoController {
+public class MemberController {
 
 	private final MemberService memberService;
+
+	private final JwtUtil jwtUtil;
 
 	@GetMapping("/")
 	public ResponseEntity<?> find() {
@@ -35,50 +37,47 @@ public class DemoController {
 		return ResponseEntity.ok().body("회원가입 성공");
 
 	}
-	/*
-	 * @PostMapping("/login") public ResponseEntity<?> login(@RequestBody Member
-	 * member) { String token =
-	 * memberService.login(member.getId(),member.getPassword()); return
-	 * ResponseEntity.ok().body("성공"); }
-	 */
+
+	@GetMapping("/current-member")
+	public ResponseEntity<?> currentmember(HttpServletRequest request) {
+		String accessToken =request.getHeader("access");
+		String access =jwtUtil.getUsername(accessToken);
+	return ResponseEntity.ok().body("토큰 데이터 확인 : "+access);
+		
+		
+	}
 
 	@GetMapping("/member")
 	public ResponseEntity<?> findAll() {
-		return new ResponseEntity<>(memberService.모두가져오기(), HttpStatus.OK);
+		return new ResponseEntity<>(memberService.getMembers(), HttpStatus.OK);
 	}
 
 	@GetMapping("/member/{id}")
 	public ResponseEntity<?> findById(@PathVariable Long id) {
-		return new ResponseEntity<>(memberService.한건가져오기(id), HttpStatus.OK);
+		return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
 	}
 
 	@PutMapping("/member/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Member member) {
-		return new ResponseEntity<>(memberService.수정하기(id, member), HttpStatus.OK);
+		return new ResponseEntity<>(memberService.updateMember(id, member), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/member/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable Long id, @RequestBody Member member) {
-		return new ResponseEntity<>(memberService.삭제하기(id), HttpStatus.OK);
+		return new ResponseEntity<>(memberService.deleteMember(id), HttpStatus.OK);
 	}
 
-	// 중복 검사
-	@GetMapping("/member/joinproc/{id}")
-	public ResponseEntity<Boolean> existsById(@PathVariable("id") String id) {
-		return ResponseEntity.ok(memberService.existsById(id));
+//	// 중복 검사
+//	@GetMapping("/member/joinproc/{id}")
+//	public ResponseEntity<Boolean> existsById(@PathVariable("id") String id) {
+//		return ResponseEntity.ok(memberService.existsById(id));
+//
+//	}
 
-	}
-	
-	@GetMapping("/api/demo")
-	public List<String> Hello() {
-		return Arrays.asList("React+Spring", "연결 성공");
-	}
-
-	
 	@GetMapping("/admin")
-    public String admin() {
+	public String admin() {
 
-        return "admin Controller";
-    }
-	
+		return "admin Controller";
+	}
+
 }

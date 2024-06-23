@@ -2,12 +2,11 @@ package com.example.demo.filter;
 
 import java.io.IOException;
 
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.example.demo.exception.AppException;
-import com.example.demo.exception.ErrorCode;
+
+import com.example.demo.service.RefreshService;
 import com.example.demo.utils.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,14 +21,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CustomLogoutFilter extends GenericFilterBean{
 	
 	private final JwtUtil jwtUtil;
+	
+	private final RefreshService refreshService;
     
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public CustomLogoutFilter(JwtUtil jwtUtil,RedisTemplate<String, Object> redisTemplate) {
+   
+    public CustomLogoutFilter(JwtUtil jwtUtil,RefreshService refreshService) {
 
         this.jwtUtil = jwtUtil;
-       
-        this.redisTemplate = redisTemplate;
+        this.refreshService = refreshService;
+        
     }
     
    
@@ -94,13 +94,13 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        
 	        
 	        String username = jwtUtil.getUsername(refresh);
-	        System.out.println(username);
+	      
 			//redis Token 조회
-	    	getValues(username);
-	    	System.out.println(username);
+	        refreshService.getValues(username);
+	    	
 	    	//refreshToken 삭제
-	    	deleteValue(username);
-	    	System.out.println(refresh);
+	    	refreshService.deleteValue(username);
+	    	
 	       
 	        
 
@@ -112,17 +112,7 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        response.addCookie(cookie);
 	        response.setStatus(HttpServletResponse.SC_OK);
 	}
-			private void getValues(String key) {
-			ValueOperations<String, Object> values = redisTemplate.opsForValue();
-			if (values.get(key) == null) {
-				throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN, "(existbyfresh)invalid refresh token");
-				}
-			
-			}
-			
-			private void deleteValue(String key) {
-		        redisTemplate.delete(key);
-		    }
+
 		
 
 }

@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.BoardResponse;
 import com.example.demo.service.BoardService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +22,10 @@ public class BoardController {
 	@GetMapping("/board/{id}")
 	public ResponseEntity<List<BoardResponse>> getBoardByMember (@PathVariable(name = "id") Long id){
 	List<BoardResponse> boardlist = bservice.findBoardByMember(id);
+	
+	
 	return ResponseEntity.ok(boardlist);
 	}
+	
+	
 }

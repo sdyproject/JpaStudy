@@ -32,7 +32,7 @@ public class JWTFilter extends OncePerRequestFilter{
 			throws ServletException, IOException {
 		
 		String accessToken = request.getHeader("access");
-
+		
 		
 		if (accessToken == null) {
 
@@ -67,10 +67,12 @@ public class JWTFilter extends OncePerRequestFilter{
 		    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		    return;
 		}
-
+		 
 		
 		String username = jwtUtil.getUsername(accessToken);
+		System.out.println("username :"+username);
 		String role = jwtUtil.getRole(accessToken);
+		System.out.println("role :"+role);
 
 		 Member member = new Member();
 		member.setUsername(username);
@@ -82,5 +84,6 @@ public class JWTFilter extends OncePerRequestFilter{
 
 		filterChain.doFilter(request, response);
 	}
+	
 
 }
