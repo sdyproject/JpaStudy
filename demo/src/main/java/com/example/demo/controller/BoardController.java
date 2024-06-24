@@ -3,10 +3,14 @@ package com.example.demo.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.BoardResponse;
+import com.example.demo.entity.Board;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.RefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,6 +23,8 @@ public class BoardController {
 
 	private final BoardService bservice;
 	
+	
+	
 	@GetMapping("/board/{id}")
 	public ResponseEntity<List<BoardResponse>> getBoardByMember (@PathVariable(name = "id") Long id){
 	List<BoardResponse> boardlist = bservice.findBoardByMember(id);
@@ -27,5 +33,10 @@ public class BoardController {
 	return ResponseEntity.ok(boardlist);
 	}
 	
+	@PostMapping("/board")
+    public ResponseEntity<String> writeBoard(@RequestBody Board board, HttpServletRequest request) {
+        String result = bservice.writeBoard(board, request);
+        return ResponseEntity.ok(result);
+    }
 	
 }

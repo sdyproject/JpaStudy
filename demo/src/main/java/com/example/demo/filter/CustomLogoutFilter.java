@@ -93,13 +93,13 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        }
 	        
 	        
-	        String username = jwtUtil.getUsername(refresh);
-	      
+			/* String username = jwtUtil.getUsername(refresh); */
+	        Long id = jwtUtil.getId(refresh);
 			//redis Token 조회
-	        refreshService.getValues(username);
+	        refreshService.getValues(id.toString());
 	    	
 	    	//refreshToken 삭제
-	    	refreshService.deleteValue(username);
+	    	refreshService.deleteValue(id.toString());
 	    	
 	       
 	        

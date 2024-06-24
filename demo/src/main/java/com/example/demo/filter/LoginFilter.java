@@ -14,7 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
+import com.example.demo.dto.CustomUserDetails;
 import com.example.demo.dto.LoginDto;
+import com.example.demo.entity.Member;
 import com.example.demo.service.RefreshService;
 import com.example.demo.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,24 +82,30 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) {
-
+		 CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+	      Long id = customUserDetails.getId();
+	    
 		String username = authentication.getName();
-
+		
+		
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
-
+		
+		
+		
+		
 		// 토큰 생성
 		// username , role 동일값들어가고 생명주기 다르게 준다.
-		String access = jwtUtil.createJwt("access", username, role, 600000L);
-		String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+		String access = jwtUtil.createJwt("access",id, username, role, 600000L);
+		String refresh = jwtUtil.createJwt("refresh",id, username, role, 86400000L);
 		System.out.println(refresh);
 
 		
 
 		//Redis 토큰 생성
-		refreshService.setValues(username, refresh);
+		refreshService.setValues(id.toString(), refresh);
 		
 		response.setHeader("access", access);
 		response.addCookie(createCookie("refresh", refresh));

@@ -29,10 +29,16 @@ public class CustomUserDetails implements UserDetails{
 				// TODO Auto-generated method stub
 				return member.getRole();
 			}
+			
+			
 		});
 		return collection;
 	}
-
+	
+	public Long getId() {
+		return member.getId();
+	}
+	
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
@@ -44,7 +50,8 @@ public class CustomUserDetails implements UserDetails{
 		// TODO Auto-generated method stub
 		return member.getUsername();
 	}
-
+	
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
@@ -68,6 +75,10 @@ public class CustomUserDetails implements UserDetails{
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	public Member getMember() {
+        return member;
+    }
 	
 	
 

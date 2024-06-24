@@ -60,14 +60,7 @@ public class MemberService {
 		return "SUCCESS";
 
 	}
-	/*
-	 * public Member getMemberName(String username) { Member member =
-	 * memberRepository.findByUsername(username); if (member==null) { throw new
-	 * AppException(ErrorCode.USER_DUPLICATED, "존재하지 않는 멤버 입니다."); }
-	 * 
-	 * 
-	 * return member; }
-	 */
+	
 
 	@Transactional(readOnly = true)
 	public Member getMember(Long id) {
@@ -80,8 +73,8 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member updateMember(Long num, Member member) {
-		Member memberVoEntity = memberRepository.findById(num)
+	public Member updateMember(Long id, Member member) {
+		Member memberVoEntity = memberRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("num 확인해주세요"));
 		memberVoEntity.setPassword(member.getPassword());
 		memberVoEntity.setHp(member.getHp());
@@ -132,18 +125,19 @@ public class MemberService {
 
 	
 		
-
+		Long id = jwtUtil.getId(refresh);
 		String username = jwtUtil.getUsername(refresh);
 		String role = jwtUtil.getRole(refresh);
-		refreshService.getValues(username);
 		
-		String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
-		String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+		refreshService.getValues(id.toString());
+		
+		String newAccess = jwtUtil.createJwt("access",id, username, role, 600000L);
+		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 86400000L);
 		
 		
 		
-		refreshService.deleteValue(refresh);
-		refreshService.setValues(username, newRefresh);
+		refreshService.deleteValue(id.toString());
+		refreshService.setValues(id.toString(), newRefresh);
 		
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));

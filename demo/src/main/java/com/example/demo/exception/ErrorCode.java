@@ -15,6 +15,7 @@ public enum ErrorCode {
 	REFRESH_TOKEN_NULL(HttpStatus.BAD_REQUEST,""),
 	REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST,""),	
 	INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST,""),
+	ACCESS_TOKEN_NULL(HttpStatus.BAD_REQUEST,""),
 	;
 	private HttpStatus httpStatus;
 	private String message;
