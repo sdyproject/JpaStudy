@@ -20,6 +20,7 @@ function CommonHeader() {
             <div className={styles.header__profileBox}>           
                 <Link to="/member" className={styles.header__profileBox__button}>SCHEDULE</Link>
                 <Link to="/member" className={styles.header__profileBox__button}>JOIN</Link>
+                
                 <Link to="/login" className={styles.header__profileBox__button}>LOGIN</Link>    
             </div>
     </div>

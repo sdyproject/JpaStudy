@@ -26,14 +26,22 @@ const loginmember = (e) => {
       method:'POST',
       headers: {'Content-Type': 'application/json; charset=utf-8'},
       data:JSON.stringify(login)
-  }).then(res=>{
+  })
+  .then(res=>{
+
       if(res.status === 200) {
+        const  access = res.headers.access;
+        console.log('access:',access);
+        localStorage.setItem('access',access);
+        
         alert("로그인 되었습니다.");
         Navigate('/');
       }
+      
       console.log(res);
 
-  }).catch(error => {
+  })
+  .catch(error => {
       alert("로그인 실패");
       console.log(error.res);
   })
