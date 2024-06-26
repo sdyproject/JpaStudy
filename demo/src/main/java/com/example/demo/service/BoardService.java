@@ -8,6 +8,7 @@ import com.example.demo.entity.Board;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.utils.JwtUtil;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,23 +30,28 @@ public class BoardService {
 		return boardRepository.findBoardByMember(id);
 	}
 	
-	
+	@Transactional
 	public String writeBoard(Board board, HttpServletRequest request) {
-		String token = refreshService.extractTokenFromRequest(request);
-		System.out.println(token);
-		 Long id = jwtUtil.getId(token);
+		/*
+		 * String Tid = refreshService.extractTokenFromRequest(request);
+		 * System.out.println(Tid); Long id = Long.valueOf(Tid);
+		 */
+		String accessToken =request.getHeader("access");
+		String gid = accessToken.substring(7);
+		Long id = Long.valueOf(gid);
+		System.out.println(id);
 		 
 		 String boardname = board.getBoardname();
 		 String boardcontext = board.getBoardcontext();
-		 Date boardwrite = board.getBoardwrite();
 		 Date boardschedule = board.getBoardschedule();
 		 
 		 
 		 Board data = new Board();
 		 data.setBoardname(boardname);
 		 data.setBoardcontext(boardcontext);
-		 data.setBoardwrite(boardwrite);
 		 data.setId(id);
+		 LocalDateTime localDateTime= LocalDateTime.now();
+		 data.setBoardwrite(localDateTime);;
 		 data.setBoardschedule(boardschedule);
 		 boardRepository.save(data);
 		 

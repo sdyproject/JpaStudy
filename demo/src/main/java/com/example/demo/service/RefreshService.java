@@ -42,14 +42,12 @@ public class RefreshService {
 	        redisTemplate.delete(key);
 	    }
 		
-		public String  extractTokenFromRequest (HttpServletRequest request) {
-			String accessToken =request.getHeader("access");
-			if (accessToken == null) {
-				throw new AppException(ErrorCode.ACCESS_TOKEN_NULL, "access token null");
-			}
-			Long access =jwtUtil.getId(accessToken);
-			return access.toString().substring(7);
-		}
+		/*
+		 * public String extractTokenFromRequest (HttpServletRequest request) { String
+		 * accessToken =request.getHeader("access"); if (accessToken == null) { throw
+		 * new AppException(ErrorCode.ACCESS_TOKEN_NULL, "access token null"); } Long
+		 * access =jwtUtil.getId(accessToken); return access.toString().substring(7); }
+		 */
 		
 		
 }

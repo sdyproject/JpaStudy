@@ -30,7 +30,9 @@ function MemberJoin  () {
         axios({
             url:'api/member',
             method:'POST',
-            headers: {'Content-Type': 'application/json; charset=utf-8'},
+            headers: {'Content-Type': 'application/json; charset=utf-8',
+                // access : localStorage.getItem("access")
+            },
             data:JSON.stringify(member)
         }).then(res=>{
             if (res.status === 200 ) {

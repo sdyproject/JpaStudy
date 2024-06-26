@@ -10,7 +10,7 @@ function CommonHeader() {
     <div className={styles.header}>
       <div className={styles.header__profileBox}>
               <Link to="/" className={styles.header__profileBox__button}>Home</Link>
-              <Link to="/" className={styles.header__profileBox__button}>BOARD</Link>
+              <Link to="/board" className={styles.header__profileBox__button}>BOARD</Link>
               <Link to="/" className={styles.header__profileBox__button}>MATE</Link>
           </div>
         <Link to="/" className={styles.header__logoBox}>

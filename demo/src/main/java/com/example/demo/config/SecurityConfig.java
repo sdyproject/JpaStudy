@@ -67,6 +67,7 @@ public class SecurityConfig {
 							
 							configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
 	                        configuration.setAllowedMethods(Collections.singletonList("*"));
+	                        //쿠키 허용
 	                        configuration.setAllowCredentials(true);
 	                        configuration.setAllowedHeaders(Collections.singletonList("*"));
 	                        configuration.addExposedHeader("*");
@@ -96,7 +97,7 @@ public class SecurityConfig {
 		
 		http
 		  .authorizeHttpRequests((auth) -> auth
-				  .requestMatchers("/login", "/","/member","/reissue", "/board/*","/current-member").permitAll()
+				  .requestMatchers("/login", "/","/member","/reissue", "/board/*","/current-member","/board").permitAll()
 						 .requestMatchers("/admin").hasRole("ADMIN") 
 				  .anyRequest().authenticated());
 		http

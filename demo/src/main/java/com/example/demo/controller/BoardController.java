@@ -34,9 +34,11 @@ public class BoardController {
 	}
 	
 	@PostMapping("/board")
-    public ResponseEntity<String> writeBoard(@RequestBody Board board, HttpServletRequest request) {
-        String result = bservice.writeBoard(board, request);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<String> writeBoard(@RequestBody Board board) {
+       
+        return ResponseEntity.ok().body("작성완료");
     }
+	
+	
 	
 }

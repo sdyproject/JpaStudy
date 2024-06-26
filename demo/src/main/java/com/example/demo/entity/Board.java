@@ -1,6 +1,10 @@
 package com.example.demo.entity;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +30,9 @@ public class Board {
 	
 	private String boardcontext;
 	
-	private Date boardwrite;
+	@CreatedDate
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDateTime  boardwrite;
 	
 	private Date boardschedule;
 	
