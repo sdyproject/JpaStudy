@@ -23,7 +23,7 @@ public class BoardService {
 	
 	private final JwtUtil jwtUtil;
 	
-	private final RefreshService refreshService;
+
 	
 	public List<BoardResponse> findBoardByMember (Long id) {
 		
@@ -31,26 +31,19 @@ public class BoardService {
 	}
 	
 	@Transactional
-	public String writeBoard(Board board, HttpServletRequest request) {
-		/*
-		 * String Tid = refreshService.extractTokenFromRequest(request);
-		 * System.out.println(Tid); Long id = Long.valueOf(Tid);
-		 */
-		String accessToken =request.getHeader("access");
-		String gid = accessToken.substring(7);
-		Long id = Long.valueOf(gid);
-		System.out.println(id);
-		 
+	public String writeBoard(String token,Board board) {
+		
+	
+		 Long mid = jwtUtil.getId(token);
 		 String boardname = board.getBoardname();
 		 String boardcontext = board.getBoardcontext();
+		 LocalDateTime localDateTime= LocalDateTime.now();
 		 Date boardschedule = board.getBoardschedule();
-		 
 		 
 		 Board data = new Board();
 		 data.setBoardname(boardname);
 		 data.setBoardcontext(boardcontext);
-		 data.setId(id);
-		 LocalDateTime localDateTime= LocalDateTime.now();
+		 data.setId(mid);
 		 data.setBoardwrite(localDateTime);;
 		 data.setBoardschedule(boardschedule);
 		 boardRepository.save(data);

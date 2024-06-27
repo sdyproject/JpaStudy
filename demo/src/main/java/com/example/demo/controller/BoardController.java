@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.BoardResponse;
 import com.example.demo.entity.Board;
 import com.example.demo.service.BoardService;
-import com.example.demo.service.RefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -21,22 +20,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoardController {
 
-	private final BoardService bservice;
+	private final BoardService boardService;
 	
 	
 	
 	@GetMapping("/board/{id}")
 	public ResponseEntity<List<BoardResponse>> getBoardByMember (@PathVariable(name = "id") Long id){
-	List<BoardResponse> boardlist = bservice.findBoardByMember(id);
+	List<BoardResponse> boardlist = boardService.findBoardByMember(id);
 	
 	
 	return ResponseEntity.ok(boardlist);
 	}
 	
 	@PostMapping("/board")
-    public ResponseEntity<String> writeBoard(@RequestBody Board board) {
+    public ResponseEntity<String> writeBoard(HttpServletRequest request,@RequestBody Board board) {
        
-        return ResponseEntity.ok().body("작성완료");
+		String token = request.getHeader("access");
+		System.out.println("boardaccess:" +token);
+		boardService.writeBoard(token, board);
+        return ResponseEntity.ok().body("작성 완료");
     }
 	
 	

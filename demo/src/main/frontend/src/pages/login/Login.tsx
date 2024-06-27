@@ -32,9 +32,9 @@ const loginmember = (e) => {
   .then(res=>{
 
       if(res.status === 200) {
-        // const  access = res.headers.access;
-        // console.log('access:',access);
-        // localStorage.setItem('access',access);
+        const  access = res.headers.access;
+        console.log('access:',access);
+        localStorage.setItem('access',access);
         
         alert("로그인 되었습니다.");
         Navigate('/');

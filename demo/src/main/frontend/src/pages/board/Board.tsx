@@ -1,8 +1,8 @@
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 import styles from './Board.module.scss'
 import { useState } from 'react';
+
 function Board() {
 
     const Navigate = useNavigate();
@@ -23,14 +23,15 @@ function Board() {
    
     
     const boradsubmit = (e) => {
+        const token = localStorage.getItem("access");
         e.preventDefault();
         axios({
             url:'api/board',
-            method:'POST',
+            method: 'POST',
             headers: {'Content-Type': 'application/json; charset=utf-8',
-                access : localStorage.getItem("access")
+                    'access': `${token}`
             },
-            withCredentials: true,
+            
             data:JSON.stringify(board)
         }).then(res=>{
             if (res.status === 200 ) {
