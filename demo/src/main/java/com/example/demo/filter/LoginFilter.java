@@ -98,8 +98,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		
 		// 토큰 생성
 		// username , role 동일값들어가고 생명주기 다르게 준다.
-		String access = jwtUtil.createJwt("access",id, username, role, 600000L);
-		String refresh = jwtUtil.createJwt("refresh",id, username, role, 86400000L);
+		String access = jwtUtil.createJwt("access",id, username, role, 100000L);
+		String refresh = jwtUtil.createJwt("refresh",id, username, role, 8600000L);
 		System.out.println(refresh);
 
 		
@@ -130,7 +130,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		// https 통신 시 필요한 setSecure
 		// cookie.setSecure(true);
 		// 쿠키 적용 범위 : setPath
-		// cookie.setPath("/");
+		 cookie.setPath("/");
 		// 자바스크립트를 통한 쿠기 접근 제어
 		cookie.setHttpOnly(true);
 

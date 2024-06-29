@@ -1,12 +1,12 @@
 
 import { useNavigate } from "react-router-dom";
+// import {  useCookies } from 'react-cookie';
 import styles from './Login.module.scss'
 import axios from "axios";
 import { useState } from "react";
 
 function Login() {
     const Navigate = useNavigate();
-
     const [login,setLogin] = useState ({
       username:"",
       password:"",
@@ -26,14 +26,16 @@ const loginmember = (e) => {
       url:'api/login',
       method:'POST',
       headers: {'Content-Type': 'application/json; charset=utf-8'},
-      withCredentials: true, 
+      // withCredentials: true, 
       data:JSON.stringify(login)
   })
   .then(res=>{
 
       if(res.status === 200) {
         const  access = res.headers.access;
+        
         console.log('access:',access);
+
         localStorage.setItem('access',access);
         
         alert("로그인 되었습니다.");

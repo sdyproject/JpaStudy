@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import TokenRefresh from "./components/common/token/TokenRefresh"
+// import { CookiesProvider } from 'react-cookie';
+// import TokenRefresh from "./components/common/token/TokenRefresh"
 import Main from '@pages/index/index'
 import MemberJoin from '@/pages/member/MemberJoin'
 import Login from "./pages/login/Login"
@@ -8,8 +9,9 @@ import Board from "./pages/board/Board"
 function App() {
   
   return (
+    // <CookiesProvider>
    <BrowserRouter>
-   <TokenRefresh/>
+    {/* <TokenRefresh/> */}
     <Routes>
       <Route path='/' element={<Main/>}/> 
       <Route path='/member' element={<MemberJoin/>}/> 
@@ -19,6 +21,8 @@ function App() {
     </Routes>
     
     </BrowserRouter>
+    // </CookiesProvider>
+
   )
 }
 

@@ -1,11 +1,10 @@
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from './Board.module.scss'
 import { useState } from 'react';
-
+import refreshApi from "../../components/common/token/refreshApi";
 function Board() {
 
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [board,setBoard] = useState ({
         boardname:"",
@@ -22,29 +21,46 @@ function Board() {
     
    
     
-    const boradsubmit = (e) => {
-        const token = localStorage.getItem("access");
+     const boradsubmit = async (e) => {
+        // const accesstoken = localStorage.getItem("access");
         e.preventDefault();
-        axios({
-            url:'api/board',
-            method: 'POST',
-            headers: {'Content-Type': 'application/json; charset=utf-8',
-                    'access': `${token}`
-            },
-            
-            data:JSON.stringify(board)
-        }).then(res=>{
-            if (res.status === 200 ) {
+        try{
+            const response = await refreshApi.post('api/board', JSON.stringify(board), {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                }
+            });
+            if (response.status === 200) {
                 alert("작성 완료");
-                Navigate('/');
+                navigate('/');
             }
-            console.log(res);
+            console.log(response);
+        } catch (error) {
+            alert("작성 실패");
+            console.log(error);
+        }
+      
 
-        })
-         .catch(error => {
-         alert("작성 실패")
-             console.log(error.res);
-         }); 
+        // axios({
+        //     url:'api/board',
+        //     method: 'POST',
+        //     headers: {'Content-Type': 'application/json; charset=utf-8',
+        //             // 'access': `${accesstoken}`
+        //     },
+        //     data:JSON.stringify(board)
+        // }).then(res=>{
+            
+        //     if (res.status === 200 ) {
+        //         alert("작성 완료");
+        //         Navigate('/');
+        //     }
+        //     console.log(res);
+
+        // })
+        //  .catch(error => {
+        //  alert("작성 실패")
+        //      console.log(error.res);
+        //  }); 
     }
 
 

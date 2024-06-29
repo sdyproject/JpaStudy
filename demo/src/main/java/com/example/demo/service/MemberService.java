@@ -131,8 +131,8 @@ public class MemberService {
 		
 		refreshService.getValues(id.toString());
 		
-		String newAccess = jwtUtil.createJwt("access",id, username, role, 600000L);
-		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 86400000L);
+		String newAccess = jwtUtil.createJwt("access",id, username, role, 300000L);
+		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 8600000L);
 		
 		
 		
@@ -153,7 +153,7 @@ public class MemberService {
 		Cookie cookie = new Cookie(key, value);
 		cookie.setMaxAge(24 * 60 * 60);
 		// cookie.setSecure(true);
-		// cookie.setPath("/");
+		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 
 		return cookie;
