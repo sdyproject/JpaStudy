@@ -22,6 +22,8 @@ function Board() {
    
     
      const boradsubmit = async (e) => {
+        // interceptors 적용 전 로그인 시 localStorage에 저장된 access값 가져오기 
+        
         // const accesstoken = localStorage.getItem("access");
         e.preventDefault();
         try{
@@ -40,6 +42,7 @@ function Board() {
             console.log(error);
         }
       
+        // interceptors 적용 전 헤더에 access토큰 요청+게시글 작성 데이터 요청 
 
         // axios({
         //     url:'api/board',
