@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.antlr.v4.runtime.TokenStream;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -137,7 +138,7 @@ public class MemberService {
 		
 		
 		refreshService.deleteValue(id.toString());
-		refreshService.setValues(id.toString(), newRefresh);
+		refreshService.setValues(id.toString(),newRefresh,1,TimeUnit.DAYS);
 		
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));

@@ -23,7 +23,6 @@ function Board() {
     
      const boradsubmit = async (e) => {
         // interceptors 적용 전 로그인 시 localStorage에 저장된 access값 가져오기 
-        
         // const accesstoken = localStorage.getItem("access");
         e.preventDefault();
         try{

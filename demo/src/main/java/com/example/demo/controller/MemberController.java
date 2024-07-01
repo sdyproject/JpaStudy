@@ -42,7 +42,7 @@ public class MemberController {
 	public ResponseEntity<?> currentmember(HttpServletRequest request) {
 		String accessToken =request.getHeader("access");
 		String access =jwtUtil.getUsername(accessToken);
-	return ResponseEntity.ok().body("토큰 데이터 확인 : "+access);
+	return ResponseEntity.ok().body(access);
 		
 		
 	}

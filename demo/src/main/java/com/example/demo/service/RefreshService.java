@@ -3,31 +3,29 @@ package com.example.demo.service;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-
+import java.util.concurrent.TimeUnit;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
-import com.example.demo.utils.JwtUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class RefreshService {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 	
-	private final JwtUtil jwtUtil;
 	
-	  public RefreshService(RedisTemplate<String, Object> redisTemplate,JwtUtil jwtUtil) {
+	
+	  public RefreshService(RedisTemplate<String, Object> redisTemplate) {
 
 	       
 	        this.redisTemplate = redisTemplate;
-	        this.jwtUtil = jwtUtil;
+	        
 	    }
 	
 	  
-	  public void setValues(String key, String value) {
+	  public void setValues(String key, String value,long timeout, TimeUnit unit) {
 			ValueOperations<String, Object> values = redisTemplate.opsForValue();
-			values.set(key, value);
+			values.set(key, value, timeout, unit);
 		}
 
 		public void getValues(String key) {

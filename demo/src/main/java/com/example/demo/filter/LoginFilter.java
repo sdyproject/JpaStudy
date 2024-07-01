@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -105,7 +106,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		
 
 		//Redis 토큰 생성
-		refreshService.setValues(id.toString(), refresh);
+		refreshService.setValues(id.toString(), refresh,1,TimeUnit.DAYS);
 		
 		response.setHeader("access", access);
 		response.addCookie(createCookie("refresh", refresh));
