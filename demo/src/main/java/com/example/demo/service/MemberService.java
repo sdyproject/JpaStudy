@@ -76,7 +76,7 @@ public class MemberService {
 	@Transactional
 	public Member updateMember(Long id, Member member) {
 		Member memberVoEntity = memberRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("num 확인해주세요"));
+				.orElseThrow(() -> new IllegalArgumentException("id 확인해주세요"));
 		memberVoEntity.setPassword(member.getPassword());
 		memberVoEntity.setHp(member.getHp());
 		return memberVoEntity;
@@ -132,22 +132,18 @@ public class MemberService {
 		
 		refreshService.getValues(id.toString());
 		
-		String newAccess = jwtUtil.createJwt("access",id, username, role, 300000L);
-		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 8600000L);
+		String newAccess = jwtUtil.createJwt("access",id, username, role, 100000L);
+		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 1200000L);
 		
 		
 		
 		refreshService.deleteValue(id.toString());
-		refreshService.setValues(id.toString(),newRefresh,1,TimeUnit.DAYS);
+		refreshService.setValues(id.toString(),newRefresh,1200000,TimeUnit.MILLISECONDS);
 		
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));
 
 	}
-
-	
-
-	
 
 	private Cookie createCookie(String key, String value) {
 

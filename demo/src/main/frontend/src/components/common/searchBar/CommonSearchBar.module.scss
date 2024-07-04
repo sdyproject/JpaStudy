@@ -2,21 +2,66 @@
     display: flex;
     align-items: center;
     width: 100%;
-
     justify-content: space-between;
-   
+ 
     background-color: $color-warning-051;
     height: 40px;
-    
+    position: relative;
+
+    &__memberdata{
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+
+      
+         span{
+            color: $color-black-900;
+            font-size: 13px;
+            font-weight: 400;
+         }
+            
+         
+      
+    }
+    &__memberfcn{
+        background-color: $color-warning-051;
+        align-items: center;
+       
+
+        button{
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background-color: $color-warning-051;
+            font-weight: 600;
+            font-size: 10px;
+        }
+        &__button{
+            color: $color-black-900;
+            outline: none;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration-line: none;
+
+        }
+       
+    }
+
+
+
+
+
+
     &__search {
         display: flex;
         align-items: center;   
-        justify-content: flex-start;
-        
+        // justify-content: flex-start;
         width: 20vw;
         padding: 7.7px;
         margin-left: 10%;
         background-color: $color-warning-051;
+        
+        
 
         &:hover{
            
@@ -38,7 +83,7 @@
             border: none;
             margin-left: 10px;
             width: 100%;
-
+            
             font-size: 13px;
            
             line-height: 17px;
@@ -48,6 +93,8 @@
         &__input::placeholder {
             color: $color-black-900;
             font-size: 13px;
+            font-weight: 600;
+     
         }
         
         &__img {
@@ -59,17 +106,6 @@
         }
         
     }
-    .memberdata{
-        display: flex;
-         align-items: center;
-         justify-content: center;
-
-         &__memberName{
-            color: $color-black-900;
-            font-size: 15px;
-            margin-right: 20px;
-         }
-      
-    }
+   
    
 }

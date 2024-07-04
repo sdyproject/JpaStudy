@@ -37,7 +37,8 @@ function Board() {
             }
             console.log(response);
         } catch (error) {
-            alert("작성 실패");
+            alert("로그인을 진행한 후 작성 가능합니다.");
+            navigate('/login');
             console.log(error);
         }
       
@@ -70,10 +71,10 @@ function Board() {
      <div className={styles.writeborad}>
     <form className={styles.writeborad__form} onSubmit={boradsubmit} >
     <div className={styles.wrapper}>
-            <span className={styles.wrapper__title}>제목</span> <br/>
+            <span className={styles.wrapper__title}>게시글 작성</span> <br/>
              <div className={styles.wrapper__content}>
-                <input type="text" placeholder="게시글 제목" name="boardname"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
-                <input type="text" placeholder="내용" name="boardcontext"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
+                <textarea  placeholder="게시글 제목" name="boardname"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
+                <textarea placeholder="내용" name="boardcontext"  onChange={changValue} className={styles.wrapper__content__input} /> <br/>
                 <input type="date" placeholder="연락처" name="boardschedule"  onChange={changValue}  className={styles.wrapper__content__input} /> <br/>
              </div>
             </div>

@@ -26,7 +26,6 @@ const loginmember = (e) => {
       url:'api/login',
       method:'POST',
       headers: {'Content-Type': 'application/json; charset=utf-8'},
-      // withCredentials: true, 
       data:JSON.stringify(login)
   })
   .then(res=>{

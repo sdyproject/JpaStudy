@@ -1,15 +1,15 @@
-import CommonHeader  from '@/components/common/header/CommonHeader'
-import CommonSearchBar from '@/components/common/searchBar/CommonSearchBar'
+// import CommonHeader  from '@/components/common/header/CommonHeader'
+// import CommonSearchBar from '@/components/common/searchBar/CommonSearchBar'
 import styles from './styles/index.module.scss'
 
 
 function index() {
   return (
     <div className={styles.page}>
-             <CommonSearchBar/>
-            {/* 공통 헤더 UI 부분 */}
-            <CommonHeader/>
-            {/* 공통 네비게이션 UI 부분 */}
+             {/* <CommonSearchBar/>
+            
+            <CommonHeader/> */}
+            
             <div className={styles.page__contents}>
                 <div className={styles.page__contents__introBox}>
                     <div className={styles.wrapper}>

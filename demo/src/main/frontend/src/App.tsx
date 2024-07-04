@@ -4,12 +4,15 @@ import Main from '@pages/index/index'
 import MemberJoin from '@/pages/member/MemberJoin'
 import Login from "./pages/login/Login"
 import Board from "./pages/board/Board"
+import CommonHeader  from '@/components/common/header/CommonHeader'
+import CommonSearchBar from '@/components/common/searchBar/CommonSearchBar'
 function App() {
   
   return (
     <CookiesProvider>
    <BrowserRouter>
-    
+   <CommonSearchBar/>
+    <CommonHeader/>
     <Routes>
       <Route path='/' element={<Main/>}/> 
       <Route path='/member' element={<MemberJoin/>}/> 
