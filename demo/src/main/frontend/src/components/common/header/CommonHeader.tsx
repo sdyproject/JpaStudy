@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom';
 // import refreshApi from "../../../components/common/token/refreshApi";
 // import { useNavigate } from "react-router-dom";
 
-// const cookies = new Cookies();
+// const cookies = new Cookies()
 
 function CommonHeader() {
   // const navigate = useNavigate();
-  // const accesstoken = localStorage.getItem('access');
-  // const refreshToken = cookies.get('refresh');
+   const accesstoken = localStorage.getItem('access');
 
   // 로그아웃 함수
   // const Logout = async () => {
@@ -48,12 +47,10 @@ function CommonHeader() {
             <div className={styles.header__profileBox}>           
                 <Link to="/member" className={styles.header__profileBox__button}>SCHEDULE</Link>
                 <Link to="/member" className={styles.header__profileBox__button}>JOIN</Link>
-      {/* {accesstoken ? (
-          <button onClick={Logout} className={styles.header__profileBox__button}>LOGOUT</button>
-        ) : (
-          <Link to="/login" className={styles.header__profileBox__button}>LOGIN</Link>
-        )} */}
-                {/* <Link to="/login" className={styles.header__profileBox__button}>LOGIN</Link>     */}
+      {accesstoken ? (
+                       <Link to="/member" className={styles.header__profileBox__button}>MY</Link>
+                      ) : (
+                        <></>) }
             </div>
     </div>
     

@@ -1,7 +1,7 @@
 package com.example.demo.filter;
 
 import java.io.IOException;
-
+import java.io.PrintWriter;
 
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -68,7 +68,8 @@ public class CustomLogoutFilter extends GenericFilterBean{
 
 	        //refresh null check
 	        if (refresh == null) {
-
+	        	  PrintWriter writer = response.getWriter();
+				   writer.print("refresh token null");
 	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	            return;
 	        }
@@ -77,7 +78,10 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        try {
 	            jwtUtil.isExpired(refresh);
 	        } catch (ExpiredJwtException e) {
-
+	        	
+	        	   PrintWriter writer = response.getWriter();
+	   		    writer.print("expired refresh token");
+	        	
 	            //response status code
 	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	            return;
@@ -86,7 +90,9 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
 	        String category = jwtUtil.getCategory(refresh);
 	        if (!category.equals("refresh")) {
-
+	        	PrintWriter writer = response.getWriter();
+	   		    writer.print("refresh token check");
+	   		    
 	            //response status code
 	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	            return;

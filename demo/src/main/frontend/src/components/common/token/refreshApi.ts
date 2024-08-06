@@ -66,21 +66,30 @@ refreshApi.interceptors.response.use(
         return refreshApi(originalRequest);
       } catch (err) {
         
-        const refreshToken = cookies.get('refresh');
-        // console.error('refresh token 만료 요청 실패', err);
-        // // refresh token 만료시 로그아웃 
-        // await axios.post('api/logout', { refresh : refreshToken},{
-        // withCredentials: true
-        // });
+        // const refreshToken = cookies.get('refresh');
+        // // console.error('refresh token 만료 요청 실패', err);
+        // // // refresh token 만료시 로그아웃 
+        // // await axios.post('api/logout', { refresh : refreshToken},{
+        // // withCredentials: true
+        // // });
         
         
-        alert("로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
-        localStorage.removeItem('access');
-        cookies.remove(refreshToken);
-        window.location.href = '/login';
+        // alert("access 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
+        // localStorage.removeItem('access');
+        // cookies.remove(refreshToken);
+        // window.location.href = '/login';
 
         return Promise.reject(err);
       }
+    }else if(error.response.status === 400) {
+      const refresh = cookies.get('refresh');
+       
+        
+        
+        alert("refresh 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
+        localStorage.removeItem('access');
+        cookies.remove(refresh);
+        window.location.href = '/login';
     }
 
    
