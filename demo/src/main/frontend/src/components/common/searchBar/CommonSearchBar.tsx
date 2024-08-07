@@ -1,12 +1,13 @@
 import styles from './CommonSearchBar.module.scss'
 import { Link } from 'react-router-dom';
-import refreshApi from "../../../components/common/token/refreshApi";
 // import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom"; 
+import axios from 'axios';
+import { Cookies } from 'react-cookie';
 // import axios from 'axios';
 // import { Cookies } from 'react-cookie';
 
-// const cookies = new Cookies();
+ const cookies = new Cookies();
 
  function CommonSearchBar() {
   // const [memberName, setMemberName] = useState('');
@@ -38,17 +39,24 @@ import { useNavigate } from "react-router-dom";
    // 로그아웃 함수
    const handleLogout = async () => {
     try{
-      const response = await refreshApi.post('api/logout');
+      const refreshToken = cookies.get('refresh');
+      const response = await axios.post('api/logout', {refresh : refreshToken}
+      );
       if (response.status === 200) {
         alert("로그아웃 완료");
         localStorage.removeItem('access');
+        cookies.remove(refreshToken);
         navigate('/');
         
       }
      
       
     }catch(error) {
-      console.error('Logout failed', error);
+      alert("로그아웃 완료");
+      const refreshToken = cookies.get('refresh');
+      localStorage.removeItem('access');
+      cookies.remove(refreshToken);
+      navigate('/');
     }
     //  refreshApi.post('api/logout', { refresh: refreshToken }, {
     //     // withCredentials: true
@@ -84,10 +92,17 @@ import { useNavigate } from "react-router-dom";
     </div>
     <div className={styles.searchBar__memberfcn}>
     {accesstoken ? (
-          <button onClick={handleLogout} className={styles.searchBar__memberfcn__button}>logout</button>
+          <button onClick={handleLogout} className={styles.searchBar__memberfcn__button}>LOGOUT</button>
         ) : (
-          <Link to="/login" className={styles.searchBar__memberfcn__button}>login</Link>
+          <Link to="/login" className={styles.searchBar__memberfcn__button}>LOGIN</Link>
         )}
+
+    {accesstoken ? (
+          <></>
+        ) : (
+          <Link to="/member" className={styles.searchBar__memberfcn__button}>JOIN</Link>
+
+        )}  
     </div>
    </div>
   )

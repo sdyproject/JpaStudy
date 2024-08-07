@@ -28,7 +28,7 @@ public class MemberController {
 
 	@GetMapping("/")
 	public ResponseEntity<?> find() {
-		return new ResponseEntity<String>("ok", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PostMapping("/member")
@@ -47,15 +47,25 @@ public class MemberController {
 		
 	}
 
-	@GetMapping("/member")
+	@GetMapping("/members")
 	public ResponseEntity<?> findAll() {
 		return new ResponseEntity<>(memberService.getMembers(), HttpStatus.OK);
 	}
 
 	@GetMapping("/member/{id}")
-	public ResponseEntity<?> findById(@PathVariable Long id) {
-		return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
+	public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+
+	return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
 	}
+	
+//	@GetMapping("/member/{id}")
+//	public ResponseEntity<?> findById(@PathVariable("id") Long id,HttpServletRequest request) {
+//		String accessToken =request.getHeader("access");
+//		System.out.println(accessToken);
+//		
+//		
+//		return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
+//	}
 
 	@PutMapping("/member/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Member member) {

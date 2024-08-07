@@ -25,13 +25,13 @@
     }
     &__memberfcn{
         background-color: $color-warning-051;
-        align-items: center;
-       
+        align-items: center;  
+        display: flex;
+        margin-right: 5px;
 
         button{
             border: none;
             outline: none;
-            cursor: pointer;
             background-color: $color-warning-051;
             font-weight: 600;
             font-size: 10px;
@@ -39,9 +39,15 @@
         &__button{
             color: $color-black-900;
             outline: none;
-            font-size: 13px;
+            font-size: 10px;
             font-weight: 600;
             text-decoration-line: none;
+            cursor: pointer;
+            margin-right: 5px;
+
+            &:hover{
+                color: $color-gray-400;
+            }
 
         }
        

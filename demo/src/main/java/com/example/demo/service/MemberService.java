@@ -33,7 +33,6 @@ public class MemberService {
 
 	private final RefreshService refreshService;
 
-	/* private final RedisTemplate<String, Object> redisTemplate; */
 
 	@Transactional
 	public String join(Member member) {
