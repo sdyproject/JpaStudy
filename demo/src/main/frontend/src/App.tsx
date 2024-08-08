@@ -19,7 +19,7 @@ function App() {
       <Route path='/member' element={<MemberJoin/>}/> 
       <Route path='/login' element={<Login/>}/> 
       <Route path='/board' element={<Board/>}/> 
-      <Route path=':id' element={<My/>}/> 
+      <Route path='/my' element={<My/>}/> 
 
     </Routes>
     

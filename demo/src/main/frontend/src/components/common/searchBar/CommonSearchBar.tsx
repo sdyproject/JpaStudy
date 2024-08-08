@@ -1,7 +1,7 @@
 import styles from './CommonSearchBar.module.scss'
 import { Link } from 'react-router-dom';
 // import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom"; 
+// import { useNavigate } from "react-router-dom"; 
 import axios from 'axios';
 import { Cookies } from 'react-cookie';
 // import axios from 'axios';
@@ -11,7 +11,7 @@ import { Cookies } from 'react-cookie';
 
  function CommonSearchBar() {
   // const [memberName, setMemberName] = useState('');
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const accesstoken = localStorage.getItem('access');
   // const refreshToken = cookies.get('refresh');
 
@@ -46,7 +46,7 @@ import { Cookies } from 'react-cookie';
         alert("로그아웃 완료");
         localStorage.removeItem('access');
         cookies.remove(refreshToken);
-        navigate('/');
+        window.location.href = '/login';
         
       }
      
@@ -56,7 +56,7 @@ import { Cookies } from 'react-cookie';
       const refreshToken = cookies.get('refresh');
       localStorage.removeItem('access');
       cookies.remove(refreshToken);
-      navigate('/');
+      window.location.href = '/login';
     }
     //  refreshApi.post('api/logout', { refresh: refreshToken }, {
     //     // withCredentials: true

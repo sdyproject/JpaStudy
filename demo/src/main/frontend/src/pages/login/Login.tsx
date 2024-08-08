@@ -1,12 +1,12 @@
 
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 // import {  useCookies } from 'react-cookie';
 import styles from './Login.module.scss'
 import axios from "axios";
 import { useState } from "react";
 
 function Login() {
-    const Navigate = useNavigate();
+    // const Navigate = useNavigate();
     const [login,setLogin] = useState ({
       username:"",
       password:"",
@@ -38,7 +38,7 @@ const loginmember = (e) => {
         localStorage.setItem('access',access);
         
         alert("로그인 되었습니다.");
-        Navigate('/');
+        window.location.href = '/';
       }
       
       console.log(res);

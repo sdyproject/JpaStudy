@@ -52,20 +52,23 @@ public class MemberController {
 		return new ResponseEntity<>(memberService.getMembers(), HttpStatus.OK);
 	}
 
-	@GetMapping("/member/{id}")
-	public ResponseEntity<?> findById(@PathVariable("id") Long id) {
-
-	return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
-	}
-	
 //	@GetMapping("/member/{id}")
 //	public ResponseEntity<?> findById(@PathVariable("id") Long id,HttpServletRequest request) {
 //		String accessToken =request.getHeader("access");
-//		System.out.println(accessToken);
-//		
-//		
+//		Long access =jwtUtil.getId(accessToken);
 //		return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
 //	}
+	@GetMapping("/member")
+	public ResponseEntity<?> findById(HttpServletRequest request) {
+		String accessToken =request.getHeader("access");
+		System.out.println(accessToken);
+		Long id =jwtUtil.getId(accessToken);
+		System.out.println("id :"+id);
+		System.out.println(memberService.getMember(id));
+		return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
+	}
+	
+
 
 	@PutMapping("/member/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Member member) {

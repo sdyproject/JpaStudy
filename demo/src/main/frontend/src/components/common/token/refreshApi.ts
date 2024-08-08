@@ -6,8 +6,6 @@ const cookies = new Cookies();
 
 // axios 인스턴스 생성 (기본 설정 포함)
 const refreshApi = axios.create({
-
-  
   baseURL: 'http://localhost:5173/',  // 기본 API URL 설정
   withCredentials:true,
 });

@@ -99,14 +99,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		
 		// 토큰 생성
 		// username , role 동일값들어가고 생명주기 다르게 준다.
-		String access = jwtUtil.createJwt("access",id, username, role, 100000L);
-		String refresh = jwtUtil.createJwt("refresh",id, username, role, 1200000L);
-		System.out.println(refresh);
+		String access = jwtUtil.createJwt("access",id, username, role, 1200000L);
+		String refresh = jwtUtil.createJwt("refresh",id, username, role, 86400000L);
+		System.out.println("access 토큰 생성 완료 : "+access);
+		System.out.println("refresh 토큰 생성 완료 : "+refresh);
 
 		
 
 		//Redis 토큰 생성
-		refreshService.setValues(id.toString(), refresh,1200000,TimeUnit.MILLISECONDS);
+		refreshService.setValues(id.toString(), refresh,86400000,TimeUnit.MILLISECONDS);
 		
 		response.setHeader("access", access);
 		response.addCookie(createCookie("refresh", refresh));

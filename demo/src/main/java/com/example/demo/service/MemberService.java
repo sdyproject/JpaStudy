@@ -131,13 +131,13 @@ public class MemberService {
 		
 		refreshService.getValues(id.toString());
 		
-		String newAccess = jwtUtil.createJwt("access",id, username, role, 100000L);
-		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 1200000L);
+		String newAccess = jwtUtil.createJwt("access",id, username, role, 1200000L);
+		String newRefresh = jwtUtil.createJwt("refresh",id, username, role, 86400000L);
 		
 		
 		
 		refreshService.deleteValue(id.toString());
-		refreshService.setValues(id.toString(),newRefresh,1200000,TimeUnit.MILLISECONDS);
+		refreshService.setValues(id.toString(),newRefresh,86400000,TimeUnit.MILLISECONDS);
 		
 		response.setHeader("access", newAccess);
 		response.addCookie(createCookie("refresh", newRefresh));
