@@ -68,10 +68,22 @@ refreshApi.interceptors.response.use(
         return refreshApi(originalRequest);
       } catch (err) {
         const refreshToken = cookies.get('refresh');
-        alert("refresh 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
-        localStorage.removeItem('access');
-        cookies.remove(refreshToken);
-        window.location.href = '/login';
+        const response = await axios.post('api/logout', {refresh : refreshToken}
+        );
+        if (response.status === 200) {
+         alert("refresh2 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
+         localStorage.removeItem('access');
+         cookies.remove(refreshToken);
+         window.location.href = '/login';
+         
+       }
+        ///
+        // const refreshToken = cookies.get('refresh');
+        
+        // alert("refresh1 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
+        // localStorage.removeItem('access');
+        // cookies.remove(refreshToken);
+        // window.location.href = '/login';
        
         // const refreshToken = cookies.get('refresh');
         // // console.error('refresh token 만료 요청 실패', err);
@@ -90,10 +102,16 @@ refreshApi.interceptors.response.use(
       }
     }else if(error.response.status === 400) {
        const refreshToken = cookies.get('refresh');
-         alert("refresh 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
-         localStorage.removeItem('access');
-         cookies.remove(refreshToken);
-         window.location.href = '/login';
+       const response = await axios.post('api/logout', {refresh : refreshToken}
+       );
+       if (response.status === 200) {
+        alert("refresh2 토큰 만료 : 로그인 시간이 만료되었습니다. 다시 로그인 해주세요.");
+        localStorage.removeItem('access');
+        cookies.remove(refreshToken);
+        window.location.href = '/login';
+        
+      }
+         
      }
 
    
